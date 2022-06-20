@@ -39,12 +39,12 @@ def options():
 
     if not onTop:
         onTop = True
-        
+
         def closing():
             global onTop
             onTop = False
             info.destroy()
-        
+
         info = Tk()
         info.title("Options")
         info.geometry("210x215")
@@ -70,7 +70,7 @@ def options():
         rangleEntry = Entry(info, width=10, justify=CENTER)
         rangleEntry.insert(0, rampAngle)
         rangleEntry.pack()
-        
+
         infoLabel = Label(info, text="", fg="red")
         infoLabel.pack()
 
@@ -87,7 +87,7 @@ def getFunction():
         rampTime = float(rampTimeEntry.get())
         rampHeight = float(rampHeightEntry.get())
         decimalPlace = int(decimalPlaceEntry.get())
-        
+
         errorLabel.config(text="")
 
         canvas.destroy()
@@ -102,6 +102,7 @@ def getFunction():
         finalVelocity = math.sqrt(finalVelocityY**2 + initVelocityX**2)
 
         a = round((finalVelocity-initVelocity)/(2*time), decimalPlace)
+        ay = round((finalVelocityY-initVelocityY)/(2*time), decimalPlace)
 
         fX = [a, "x**2", "+", round(initVelocity, decimalPlace), "x"]
 
@@ -109,15 +110,17 @@ def getFunction():
         x = np.linspace(0,time,100)
         y1 = (fX[0]*x**2)+(fX[3]*x)
         y2 = ((2*fX[0]*x)+(fX[3]))
+        y3 = (a*x**2)+(round(initVelocityY, decimalPlace)*x)
         ax1 = fig.add_subplot()
         ax1.set_ylabel("s (m)")
         ax1.set_xlabel("t (s)")
         plt.plot(x,y1, "r", label="s = f(t)")
         plt.plot(x,y2, "b", label="s = f'(t)")
+        plt.plot(x, y2, "g")
         plt.title("Displacement/Time graph after ball leaves the ramp", fontsize=11)
         plt.legend()
         plt.grid()
-                
+
         figCanvas = FigureCanvasTkAgg(fig, master=parent)
         figCanvas.draw()
         canvas = figCanvas.get_tk_widget()
@@ -129,7 +132,7 @@ def getFunction():
 
         functionLabel.config(text=function)
         derviativeLabel.config(text=derivative)
-    
+
     except ValueError:
         if rampTimeEntry.get() == "" or rampHeightEntry.get() == "" or decimalPlaceEntry.get() == "":
             errorLabel.config(text="Please fill in all fields")
